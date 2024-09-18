@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My experiment</title> 
+    <script src="https://unpkg.com/jspsych@8.0.0"></script> 
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.0.0"></script> 
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@2.0.0"></script>
+    <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe"></script>
+    <link href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css" rel="stylesheet" type="text/css" /> 
+  </head>
+  <body></body>
+  <script>
+    /* initialize jsPsych */
+    var jsPsych = initJsPsych();
+    var timeline = []; 
+    var instructions = {
+        /* this initializes an html page that will disappear and advance when a key is pressed - list of plugins has more */
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "Hello and welcome to the experiment. Here is the first task:"
+    };
+    timeline.push(instructions);
+    var image_trial = {
+        type: jsPsychImageKeyboardResponse,
+        stimulus: "img/Dragon.jpg",
+        choices: ["y", "n"],
+        //prompt: "Is there a dragon here?"
+
+    };
+    var fixation = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "+",
+        choice: "NO_KEYS",
+        trial_duration: 500
+    };
+    var image_instr = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "Is there a dragon here? Y for yes, N for no.",
+        choice: "NO_KEYS",
+        trial_duration: 1000
+    };
+    var image_trial_v2 = {
+        type: jsPsychImageKeyboardResponse,
+        stimulus: jsPsych.timelineVariable("image"),
+        choices: ["y", "n"]
+    };
+    var trial_procedure = {
+        timeline:[fixation, image_instr, image_trial_v2],
+        timeline_variables: [
+            {image: "img/Dragon.jpg", name: "Dragon"},
+            {image: "img/Floral.jpg", name: "Floral"}
+        ]
+    };
+    timeline.push(trial_procedure);
+    const subject_id = jsPsych.randomization.randomID(10);
+    const filename = `${subject_id}.csv`;
+    const save_data = {
+        type: jsPsychPipe,
+        action: "save",
+        experiment_id: "oNA5VGPNmipt",
+        filename: filename,
+        data_string: ()=>jsPsych.data.get().csv()
+    };    
+    timeline.push(save_data);  
+    jsPsych.run(timeline);
+    // how to make the images smaller? How to make the trials repeat?
+  </script>
+</html>
